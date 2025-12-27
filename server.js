@@ -14,7 +14,9 @@ const DATA_FILE = path.join(__dirname, 'data', 'deals.json');
 app.use(cors({
   origin: [
     'http://localhost:3000',
+    'http://localhost:5173',
     'https://asin-watcher-frontend.mathias2413.workers.dev',
+    'https://asin-watcher-frontendt2.mathias2413.workers.dev',
     /^chrome-extension:\/\//
   ],
   methods: ['GET', 'POST', 'DELETE', 'OPTIONS'],
@@ -72,7 +74,7 @@ app.get('/api/deals', async (req, res) => {
 // Ingest/update a single deal
 app.post('/api/ingest', async (req, res) => {
   try {
-    const { asin, title, price, code, discount, imageUrl } = req.body;
+    const { asin, title, price, code, discount, imageUrl, affiliateLink } = req.body;
     
     if (!asin) {
       return res.status(400).json({ error: 'ASIN is required' });
@@ -89,6 +91,7 @@ app.post('/api/ingest', async (req, res) => {
       code: code || (existingIndex > -1 ? deals[existingIndex].code : undefined),
       discount: discount || (existingIndex > -1 ? deals[existingIndex].discount : undefined),
       imageUrl: imageUrl || (existingIndex > -1 ? deals[existingIndex].imageUrl : `https://picsum.photos/seed/${asin}/400/400`),
+      affiliateLink: affiliateLink || (existingIndex > -1 ? deals[existingIndex].affiliateLink : undefined),
       lastUpdated: Date.now(),
       status: 'Incomplete'
     };
